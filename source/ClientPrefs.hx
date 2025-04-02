@@ -7,6 +7,19 @@ import flixel.graphics.FlxGraphic;
 import Controls;
 
 class ClientPrefs {
+    //Mobile Things
+    public static var wideScreen:Bool = false;
+  	#if android public static var storageType:String = "EXTERNAL_DATA"; #end
+  	public static var VirtualPadAlpha:Float = #if mobile 0.6 #else 0 #end;
+  	public static var extraKeyReturn1:String = 'SHIFT';
+    public static var extraKeyReturn2:String = 'SPACE';
+    public static var extraKeyReturn3:String = 'Q';
+    public static var extraKeyReturn4:String = 'E';
+  	public static var hitboxtype:String = 'Gradient';
+  	public static var extraKeys:Int = 2;
+  	public static var hitboxLocation:String = 'Bottom';
+  	public static var hitboxalpha:Float = #if mobile 0.7 #else 0 #end; //someone request this lol
+  	
 	//TO DO: Redo ClientPrefs in a way that isn't too stupid
 	public static var downScroll:Bool = false;
 	public static var showFPS:Bool = true;
@@ -76,6 +89,19 @@ class ClientPrefs {
 		FlxG.save.data.arrowHSV = arrowHSV;
 		FlxG.save.data.imagesPersist = imagesPersist;
 		FlxG.save.data.ghostTapping = ghostTapping;
+		
+		//mobile
+  		FlxG.save.data.wideScreen = wideScreen;
+  		FlxG.save.data.storageType = storageType;
+  		FlxG.save.data.VirtualPadAlpha = VirtualPadAlpha;
+  		FlxG.save.data.extraKeyReturn1 = extraKeyReturn1;
+  		FlxG.save.data.extraKeyReturn2 = extraKeyReturn2;
+  		FlxG.save.data.extraKeyReturn3 = extraKeyReturn3;
+  		FlxG.save.data.extraKeyReturn4 = extraKeyReturn4;
+  		FlxG.save.data.hitboxtype = hitboxtype;
+  		FlxG.save.data.extraKeys = extraKeys;
+  		FlxG.save.data.hitboxLocation = hitboxLocation;
+  		FlxG.save.data.hitboxalpha = hitboxalpha;
 
 		var achieves:Array<String> = [];
 		for (i in 0...Achievements.achievementsUnlocked.length) {
@@ -151,9 +177,45 @@ class ClientPrefs {
 		if(FlxG.save.data.ghostTapping != null) {
 			ghostTapping = FlxG.save.data.ghostTapping;
 		}
+		
+		//Mobile
+  		if(FlxG.save.data.wideScreen != null) {
+  			wideScreen = FlxG.save.data.wideScreen;
+  		}
+  		if(FlxG.save.data.storageType != null) {
+  			storageType = FlxG.save.data.storageType;
+  		}
+  		if(FlxG.save.data.VirtualPadAlpha != null) {
+  			VirtualPadAlpha = FlxG.save.data.VirtualPadAlpha;
+  		}
+  		if(FlxG.save.data.extraKeyReturn1 != null) {
+  			extraKeyReturn1 = FlxG.save.data.extraKeyReturn1;
+  		}
+  		if(FlxG.save.data.extraKeyReturn2 != null) {
+  			extraKeyReturn2 = FlxG.save.data.extraKeyReturn2;
+  		}
+  		if(FlxG.save.data.extraKeyReturn3 != null) {
+  			extraKeyReturn3 = FlxG.save.data.extraKeyReturn3;
+  		}
+  		if(FlxG.save.data.extraKeyReturn4 != null) {
+  			extraKeyReturn4 = FlxG.save.data.extraKeyReturn4;
+  		}
+  		if(FlxG.save.data.hitboxtype != null) {
+  			hitboxtype = FlxG.save.data.hitboxtype;
+  		}
+  		if(FlxG.save.data.extraKeys != null) {
+  			extraKeys = FlxG.save.data.extraKeys;
+  		}
+  		if(FlxG.save.data.hitboxLocation != null) {
+  			hitboxLocation = FlxG.save.data.hitboxLocation;
+  		}
+  		if(FlxG.save.data.hitboxalpha != null) {
+  			hitboxalpha = FlxG.save.data.hitboxalpha;
+  		}
+  		//
 
 		var save:FlxSave = new FlxSave();
-		save.bind('controls', 'ninjamuffin99');
+		save.bind('controls', CoolUtil.getSavePath());
 		if(save != null && save.data.customControls != null) {
 			reloadControls(save.data.customControls);
 		}
