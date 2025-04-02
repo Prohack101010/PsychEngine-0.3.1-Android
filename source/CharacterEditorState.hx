@@ -112,6 +112,7 @@ class CharacterEditorState extends MusicBeatState
 		leHealthIcon = new HealthIcon(char.healthIcon, false);
 		add(leHealthIcon);
 		leHealthIcon.y = FlxG.height - 150;
+		leHealthIcon.cameras = [camHUD];
 		dumbTexts = new FlxTypedGroup<FlxText>();
 		add(dumbTexts);
 
@@ -918,7 +919,6 @@ class CharacterEditorState extends MusicBeatState
  				    _virtualpad.buttonDown.justPressed || FlxG.keys.justPressed.DOWN
  				];
 
-				var controlArray:Array<Bool> = [FlxG.keys.justPressed.LEFT, FlxG.keys.justPressed.RIGHT, FlxG.keys.justPressed.UP, FlxG.keys.justPressed.DOWN];
 				for (i in 0...controlArray.length) {
 					if(controlArray[i]) {
 						var holdShift = _virtualpad.buttonC.pressed || FlxG.keys.pressed.SHIFT;
@@ -940,7 +940,6 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 		}
-		camHUD.zoom = FlxG.camera.zoom;
 		super.update(elapsed);
 	}
 

@@ -49,6 +49,11 @@ using StringTools;
 
 class PlayState extends MusicBeatState
 {
+    #if LUA_VIRTUALPAD
+    public var luaVirtualPad:FlxVirtualPad;
+    #end
+    public static var instance:PlayState;
+    
 	public static var STRUM_X = 42;
 
 	public static var ratingStuff:Array<Dynamic> = [
@@ -149,6 +154,7 @@ class PlayState extends MusicBeatState
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
+	public var luaVpadCam:FlxCamera;
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 
@@ -227,17 +233,23 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
+		// for lua
+		instance = this;
+
 		practiceMode = false;
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camOther = new FlxCamera();
+		luaVpadCam = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
+		luaVpadCam.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
 		FlxG.cameras.add(camOther);
+		FlxG.cameras.add(luaVpadCam, false);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
 
 		FlxCamera.defaultCameras = [camGame];
@@ -3431,6 +3443,12 @@ class PlayState extends MusicBeatState
 			luaArray[i].stop();
 		}
 		super.destroy();
+		
+		#if LUA_VIRTUALPAD
+		if (luaVirtualPad != null)
+			luaVirtualPad = FlxDestroyUtil.destroy(luaVirtualPad);
+		#end
+		instance = null;
 	}
 
 	var lastStepHit:Int = -1;
@@ -3703,4 +3721,44 @@ class PlayState extends MusicBeatState
 
 	var curLight:Int = 0;
 	var curLightEvent:Int = 0;
+	
+	#if LUA_VIRTUALPAD
+	public function makeLuaVirtualPad(DPad:String, Action:String)
+	{
+	    if(members.contains(luaVirtualPad)) return;
+
+		luaVirtualPad = new FlxVirtualPad(DPad, Action);
+		luaVirtualPad.alpha = ClientPrefs.VirtualPadAlpha;
+	}
+	
+	public function addLuaVirtualPad() {
+		if(luaVirtualPad == null || members.contains(luaVirtualPad)) return;
+
+		var target:Dynamic = PlayState.instance;
+		target.insert(target.members.length + 1, luaVirtualPad);
+	}
+	
+	public function addLuaVirtualPadCamera()
+	{
+		if(luaVirtualPad != null)
+		    luaVirtualPad.cameras = [luaVpadCam];
+	}
+	
+	public function removeLuaVirtualPad()
+	{			
+		if (luaVirtualPad != null) {
+			luaVirtualPad.kill();
+			luaVirtualPad.destroy();
+			remove(luaVirtualPad);
+			luaVirtualPad = null;
+		}
+	}
+	
+	public static function checkVPadPress(buttonPostfix:String, type = 'justPressed') {
+		var buttonName = "button" + buttonPostfix;
+		var button = Reflect.getProperty(PlayState.instance.luaVirtualPad, buttonName); //Access Spesific LuaVirtualPad Button
+		return Reflect.getProperty(button, type);
+		return false;
+	}
+	#end
 }
